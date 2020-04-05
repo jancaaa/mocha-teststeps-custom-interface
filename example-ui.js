@@ -14,14 +14,11 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 	suite.on('pre-require', function(context, file, mocha) {
 		var common = require('mocha/lib/interfaces/common')(suites, context);
 
-		/**
-		 * Use all existing hook logic common to UIs. Common logic can be found in
-		 * https://github.com/mochajs/mocha/blob/master/lib/interfaces/common.js
-		 */
-		context.setup = common.beforeEach;
-		context.teardown = common.afterEach;
-		context.suiteSetup = common.before;
-		context.suiteTeardown = common.after;
+		//BDD
+		context.before = common.before;
+		context.after = common.after;
+		context.beforeEach = common.beforeEach;
+		context.afterEach = common.afterEach;
 		context.run = mocha.options.delay && common.runWithSuite(suite);
 
 		/**
