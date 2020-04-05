@@ -1,0 +1,23 @@
+{
+	"scripts": {
+		"test": "mocha --require ./example-ui.js --ui example-ui"
+	},
+	"devDependencies": {
+		"mocha-bdd-steps": "^1.1.0",
+		"mocha-param": "^2.0.0",
+		"mocha-steps": "^1.3.0"
+	},
+	"dependencies": {
+		"chai": "^4.2.0",
+		"mocha": "^7.1.1"
+	},
+	"name": "mocha-playground",
+	"version": "1.0.0",
+	"main": "index.js",
+	"directories": {
+		"test": "test"
+	},
+	"author": "Jana",
+	"license": "ISC",
+	"description": "Mocha playgroud ...to make CLink tests readable ;)"
+}
