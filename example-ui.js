@@ -8,10 +8,10 @@ var Mocha = require('mocha');
  * "comment" function:
  * https://github.com/mochajs/mocha/blob/master/lib/interfaces/tdd.js
  */
-module.exports = Mocha.interfaces['example-ui'] = function(suite) {
+module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	var suites = [suite];
 
-	suite.on('pre-require', function(context, file, mocha) {
+	suite.on('pre-require', function (context, file, mocha) {
 		var common = require('mocha/lib/interfaces/common')(suites, context);
 
 		//BDD
@@ -28,7 +28,7 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 		 * a pending test. But any custom reporter could check for the isComment
 		 * attribute on a test to modify its presentation.
 		 */
-		context.comment = function(title) {
+		context.comment = function (title) {
 			var suite, comment;
 
 			suite = suites[0];
@@ -51,7 +51,7 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 		 * given title and callback, fn`, which may contain nested suites
 		 * and/or tests.
 		 */
-		context.suite = function(title, fn) {
+		context.suite = function (title, fn) {
 			var suite = Suite.create(suites[0], title);
 
 			suite.file = file;
@@ -65,7 +65,7 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 		/**
 		 * The default TDD pending suite functionality.
 		 */
-		context.suite.skip = function(title, fn) {
+		context.suite.skip = function (title, fn) {
 			var suite = Suite.create(suites[0], title);
 
 			suite.pending = true;
@@ -77,7 +77,7 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 		/**
 		 * Default TDD exclusive test-case logic.
 		 */
-		context.suite.only = function(title, fn) {
+		context.suite.only = function (title, fn) {
 			var suite = context.suite(title, fn);
 			mocha.grep(suite.fullTitle());
 		};
@@ -86,7 +86,7 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 		 * Default TDD test-case logic. Describes a specification or test-case
 		 * with the given `title` and callback `fn` acting as a thunk.
 		 */
-		context.test = function(title, fn) {
+		context.test = function (title, fn) {
 			var suite, test;
 
 			suite = suites[0];
@@ -101,7 +101,7 @@ module.exports = Mocha.interfaces['example-ui'] = function(suite) {
 		/**
 		 * Exclusive test-case.
 		 */
-		context.test.only = function(title, fn) {
+		context.test.only = function (title, fn) {
 			var test, reString;
 
 			test = context.test(title, fn);
