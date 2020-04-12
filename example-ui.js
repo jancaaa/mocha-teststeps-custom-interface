@@ -1,12 +1,10 @@
-//Copied from: https://github.com/mochajs/mocha/wiki/Third-party-UIs
-
 var Mocha = require('mocha');
 (Suite = require('mocha/lib/suite')), (Test = require('mocha/lib/test')), (escapeRe = require('escape-string-regexp'));
 
 /**
  * This example is identical to the TDD interface, but with the addition of a
  * "comment" function:
- * https://github.com/mochajs/mocha/blob/master/lib/interfaces/tdd.js
+ * https://github.com/mochajs/mocha/blob/master/lib/interfaces/bdd.js
  */
 module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	var suites = [suite];
@@ -14,7 +12,6 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	suite.on('pre-require', function (context, file, mocha) {
 		var common = require('mocha/lib/interfaces/common')(suites, context);
 
-		//BDD
 		context.before = common.before;
 		context.after = common.after;
 		context.beforeEach = common.beforeEach;
@@ -42,76 +39,85 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			return comment;
 		};
 
-		// Remaining logic is from the tdd interface, but is necessary for a
-		// complete example
-		// https://github.com/mochajs/mocha/blob/master/lib/interfaces/tdd.js
+		// Remaining logic is from the bdd interface, but is necessary for a complete example
+		// https://github.com/mochajs/mocha/blob/master/lib/interfaces/bdd.js
 
 		/**
-		 * The default TDD suite functionality. Describes a suite with the
-		 * given title and callback, fn`, which may contain nested suites
+		 * Describe a "suite" with the given `title`
+		 * and callback `fn` containing nested suites
 		 * and/or tests.
 		 */
-		context.suite = function (title, fn) {
-			var suite = Suite.create(suites[0], title);
 
-			suite.file = file;
-			suites.unshift(suite);
-			fn.call(suite);
-			suites.shift();
-
-			return suite;
+		context.describe = context.context = function (title, fn) {
+			return common.suite.create({
+				title: title,
+				file: file,
+				fn: fn
+			});
 		};
 
 		/**
-		 * The default TDD pending suite functionality.
+		 * Pending describe.
 		 */
-		context.suite.skip = function (title, fn) {
-			var suite = Suite.create(suites[0], title);
 
-			suite.pending = true;
-			suites.unshift(suite);
-			fn.call(suite);
-			suites.shift();
+		context.xdescribe = context.xcontext = context.describe.skip = function (title, fn) {
+			return common.suite.skip({
+				title: title,
+				file: file,
+				fn: fn
+			});
 		};
 
 		/**
-		 * Default TDD exclusive test-case logic.
+		 * Exclusive suite.
 		 */
-		context.suite.only = function (title, fn) {
-			var suite = context.suite(title, fn);
-			mocha.grep(suite.fullTitle());
+
+		context.describe.only = function (title, fn) {
+			return common.suite.only({
+				title: title,
+				file: file,
+				fn: fn
+			});
 		};
 
 		/**
-		 * Default TDD test-case logic. Describes a specification or test-case
-		 * with the given `title` and callback `fn` acting as a thunk.
+		 * Describe a specification or test-case
+		 * with the given `title` and callback `fn`
+		 * acting as a thunk.
 		 */
-		context.test = function (title, fn) {
-			var suite, test;
 
-			suite = suites[0];
-			if (suite.pending) fn = null;
-			test = new Test(title, fn);
+		context.it = context.specify = function (title, fn) {
+			var suite = suites[0];
+			if (suite.isPending()) {
+				fn = null;
+			}
+			var test = new Test(title, fn);
 			test.file = file;
 			suite.addTest(test);
-
 			return test;
 		};
 
 		/**
 		 * Exclusive test-case.
 		 */
-		context.test.only = function (title, fn) {
-			var test, reString;
 
-			test = context.test(title, fn);
-			reString = '^' + escapeRe(test.fullTitle()) + '$';
-			mocha.grep(new RegExp(reString));
+		context.it.only = function (title, fn) {
+			return common.test.only(mocha, context.it(title, fn));
 		};
 
 		/**
-		 * Defines the skip behavior for a test.
+		 * Pending test case.
 		 */
-		context.test.skip = common.test.skip;
+
+		context.xit = context.xspecify = context.it.skip = function (title) {
+			return context.it(title);
+		};
+
+		/**
+		 * Number of attempts to retry.
+		 */
+		context.it.retries = function (n) {
+			context.retries(n);
+		};
 	});
 };
