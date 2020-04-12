@@ -10,7 +10,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	var suites = [suite];
 
 	suite.on('pre-require', function (context, file, mocha) {
-		var common = require('mocha/lib/interfaces/common')(suites, context);
+		var common = require('mocha/lib/interfaces/common')(suites, context, mocha);
 
 		context.before = common.before;
 		context.after = common.after;
