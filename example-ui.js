@@ -19,30 +19,6 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		context.run = mocha.options.delay && common.runWithSuite(suite);
 
 		/**
-		 * Our addition. A comment function that creates a pending test and
-		 * adds an isComment attribute to the test for identification by a
-		 * third party, custom reporter. The comment will be printed just like
-		 * a pending test. But any custom reporter could check for the isComment
-		 * attribute on a test to modify its presentation.
-		 */
-		context.comment = function (title) {
-			var suite, comment;
-
-			suite = suites[0];
-			comment = new Test(title, null);
-
-			comment.pending = true;
-			comment.isComment = true;
-			comment.file = file;
-			suite.addTest(comment);
-
-			return comment;
-		};
-
-		// Remaining logic is from the bdd interface, but is necessary for a complete example
-		// https://github.com/mochajs/mocha/blob/master/lib/interfaces/bdd.js
-
-		/**
 		 * Describe a "suite" with the given `title`
 		 * and callback `fn` containing nested suites
 		 * and/or tests.
