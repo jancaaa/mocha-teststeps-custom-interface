@@ -17,7 +17,7 @@ mysuite('SUITE1', function () {
 		console.log('This function will run after each test in the suite. For correct behavior it must be defined in fn of mysuite()');
 	});
 
-	mytest('TEST1', 'ID1', function () {
+	testParam('TEST1', 'ID1', [1, 2], function () {
 		step('Step11', 'Result11', function () {
 			expect(true).to.be.true;
 		});
@@ -29,7 +29,7 @@ mysuite('SUITE1', function () {
 		});
 	});
 
-	mytest('TEST2', 'ID2', function () {
+	testParam('TEST2', 'ID2', [1, 2], function () {
 		step('Step21', 'Result21', function () {
 			expect(true).to.be.true;
 		});
@@ -43,7 +43,7 @@ mysuite('SUITE1', function () {
 });
 
 mysuite('SUITE2', function () {
-	mytest('TEST3', 'ID3', function () {
+	testParam('TEST3', 'ID3', [1, 2], function () {
 		step('Step31', 'Result31', function () {
 			expect(true).to.be.true;
 		});
@@ -55,7 +55,7 @@ mysuite('SUITE2', function () {
 		});
 	});
 
-	mytest('TEST4', 'ID4', function () {
+	testParam('TEST4', 'ID4', [1, 2], function () {
 		step('Step41', 'Result41', function () {
 			expect(true).to.be.true;
 		});

@@ -1,11 +1,6 @@
 var Mocha = require('mocha');
 (Suite = require('mocha/lib/suite')), (Test = require('mocha/lib/test')), (escapeRe = require('escape-string-regexp'));
 
-/**
- * This example is identical to the TDD interface, but with the addition of a
- * "comment" function:
- * https://github.com/mochajs/mocha/blob/master/lib/interfaces/bdd.js
- */
 module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	var suites = [suite];
 
@@ -14,8 +9,6 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 
 		context.before = common.before;
 		context.after = common.after;
-		context.beforeEach = common.beforeEach;
-		context.afterEach = common.afterEach;
 		context.run = mocha.options.delay && common.runWithSuite(suite);
 
 		/**
@@ -188,6 +181,33 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		context.xstep = context.step.skip = function (description, expectedResult, fn) {
 			return context.stepit(description, expectedResult);
 		};
+
+		/**
+		 * Run before each describe (which means mysuite() or mytest()).
+		 * Currently, there is no check for correct nesting. See example to place it correctly.
+		 */
+		context.beforeEachSuite = context.beforeEachTest = function (fn) {
+			before(function () {
+				let suites = this.test.parent.suites || [];
+				//console.log(this.test.parent.parent); //undefined - suite level; has parent - test level
+				suites.forEach(s => {
+					s.beforeAll(fn);
+					let hook = s._beforeAll.pop();
+					s._beforeAll.unshift(hook);
+				});
+			});
+		};
+
+		context.afterEachSuite = context.afterEachTest = function (fn) {
+			before(function () {
+				let suites = this.test.parent.suites || [];
+				suites.forEach(s => {
+					s.afterAll(fn);
+					let hook = s._afterAll.pop();
+					s._afterAll.unshift(hook);
+				});
+			});
+		};
 	});
 };
 
@@ -211,7 +231,7 @@ module.exports.step = global.step = function (description, expectedResult, fn) {
 		currentStep.state = 'failed';
 
 		//mark next steps as skipped
-		for (var i = steps.indexOf(currentStep) + 1; i < steps.length - 1; i++) {
+		for (var i = steps.indexOf(currentStep) + 1; i < steps.length; i++) {
 			var test = steps[i];
 			test.pending = true;
 			test.state = 'skipped';
@@ -286,26 +306,4 @@ module.exports.beforeTest = global.beforeTest = function (fn) {
 
 module.exports.afterTest = global.afterTest = function (fn) {
 	step('After test step - close broswer, set test status', 'Browser closed, status reported', fn);
-};
-
-module.exports.beforeEachTest = global.beforeEachTest = function (fn) {
-	before(function () {
-		let suites = this.test.parent.suites || [];
-		suites.forEach(s => {
-			s.beforeAll(fn);
-			let hook = s._beforeAll.pop();
-			s._beforeAll.unshift(hook);
-		});
-	});
-};
-
-module.exports.afterEachTest = global.afterEachTest = function (fn) {
-	before(function () {
-		let suites = this.test.parent.suites || [];
-		suites.forEach(s => {
-			s.afterAll(fn);
-			let hook = s._afterAll.pop();
-			s._afterAll.unshift(hook);
-		});
-	});
 };
