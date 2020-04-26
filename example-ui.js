@@ -7,8 +7,8 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	suite.on('pre-require', function (context, file, mocha) {
 		var common = require('mocha/lib/interfaces/common')(suites, context, mocha);
 
-		context.before = common.before;
-		context.after = common.after;
+		context.before = context.beforeTest = common.before;
+		context.after = context.afterTest = common.after;
 		context.run = mocha.options.delay && common.runWithSuite(suite);
 
 		/**
@@ -127,7 +127,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		context.testParam = function (title, testCaseID, configs, fn) {
 			configs.forEach(config => {
 				var fullTitle = title + ', CONF: ' + JSON.stringify(config);
-				console.log(fn.length);
+				//console.log(fn.length);
 				if (fn.length === 0) {
 					//call sync
 					var fnu = function () {
@@ -175,14 +175,6 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		};
 
 		/**
-		 * Skip test step.
-		 * In results, step reported as skipped.
-		 */
-		context.xstep = context.step.skip = function (description, expectedResult, fn) {
-			return context.stepit(description, expectedResult);
-		};
-
-		/**
 		 * Run before each describe (which means mysuite() or mytest()).
 		 * Currently, there is no check for correct nesting. See example to place it correctly.
 		 */
@@ -208,102 +200,115 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 				});
 			});
 		};
-	});
-};
 
-module.exports.step = global.step = function (description, expectedResult, fn) {
-	if (fn == null) {
-		return stepit(description, expectedResult);
-	} else if (fn.length === 0) {
-		return stepit(description, expectedResult, sync);
-	} else {
-		return stepit(description, expectedResult, async);
-	}
-
-	function handleStepFailure(currentStep) {
-		if (currentStep._retries !== -1 && currentStep._currentRetry < currentStep._retries) {
-			return;
-		}
-
-		var steps = currentStep.parent.tests;
-
-		//mark current step as failed
-		currentStep.state = 'failed';
-
-		//mark next steps as skipped
-		for (var i = steps.indexOf(currentStep) + 1; i < steps.length; i++) {
-			var test = steps[i];
-			test.pending = true;
-			test.state = 'skipped';
-		}
-
-		//mark test as failed
-		currentStep.parent.state = 'failed';
-	}
-
-	function sync() {
-		var context = this;
-		console.log('Starting step: ' + context.test.title);
-
-		try {
-			var promise = fn.call(context);
-			if (promise != null && promise.then != null && promise.catch != null) {
-				return promise
-					.catch(function (err) {
-						handleStepFailure(context.test);
-						console.log('Failed step: ' + context.test.title);
-						throw err;
-					})
-					.then(function () {
-						console.log('Passed step: ' + context.test.title);
-					});
+		context.step = function (description, expectedResult, fn, type) {
+			var fnu;
+			if (fn == null) {
+				fnu = null;
+			} else if (fn.length === 0) {
+				fnu = sync;
 			} else {
-				console.log('Passed step: ' + context.test.title);
-				return promise;
+				fnu = async;
 			}
-		} catch (ex) {
-			handleStepFailure(context.test);
-			console.log('Failed step: ' + context.test.title);
-			throw ex;
-		}
-	}
 
-	function async(done) {
-		var context = this;
-		var title = context.test.title;
+			var suite = suites[0];
+			if (suite.isPending()) {
+				fnu = null;
+			}
+			var test = new Test(description + ' => ' + expectedResult, fnu);
+			test.file = file;
+			test.description = description;
+			test.expectedResult = expectedResult;
 
-		function onError() {
-			handleStepFailure(context.test);
-			process.removeListener('uncaughtException', onError);
-			console.log('Failed step: ' + context.test.title);
-		}
+			suite.addTest(test);
+			return test;
 
-		process.addListener('uncaughtException', onError);
-
-		console.log('Starting step: ' + context.test.title);
-
-		try {
-			fn.call(context, function (err) {
-				if (err) {
-					onError();
-					done(err);
-				} else {
-					process.removeListener('uncaughtException', onError);
-					console.log('Passed step: ' + context.test.title);
-					done(null);
+			function handleStepFailure(currentStep) {
+				if (currentStep._retries !== -1 && currentStep._currentRetry < currentStep._retries) {
+					return;
 				}
-			});
-		} catch (ex) {
-			onError();
-			throw ex;
-		}
-	}
-};
 
-module.exports.beforeTest = global.beforeTest = function (fn) {
-	step('Prepare test environment', 'Test enviroment ready', fn);
-};
+				var steps = currentStep.parent.tests;
 
-module.exports.afterTest = global.afterTest = function (fn) {
-	step('After test step - close broswer, set test status', 'Browser closed, status reported', fn);
+				//mark current step as failed
+				currentStep.state = 'failed';
+
+				//mark next steps as skipped
+				for (var i = steps.indexOf(currentStep) + 1; i < steps.length; i++) {
+					var test = steps[i];
+					test.pending = true;
+					test.state = 'skipped';
+				}
+
+				//mark test as failed
+				currentStep.parent.state = 'failed';
+			}
+
+			function sync() {
+				var context = this;
+				console.log('Starting step: ' + context.test.title);
+
+				try {
+					var promise = fn.call(context);
+					if (promise != null && promise.then != null && promise.catch != null) {
+						return promise
+							.catch(function (err) {
+								handleStepFailure(context.test);
+								console.log('Failed step: ' + context.test.title);
+								throw err;
+							})
+							.then(function () {
+								console.log('Passed step: ' + context.test.title);
+							});
+					} else {
+						console.log('Passed step: ' + context.test.title);
+						return promise;
+					}
+				} catch (ex) {
+					handleStepFailure(context.test);
+					console.log('Failed step: ' + context.test.title);
+					throw ex;
+				}
+			}
+
+			function async(done) {
+				var context = this;
+				var title = context.test.title;
+
+				function onError() {
+					handleStepFailure(context.test);
+					process.removeListener('uncaughtException', onError);
+					console.log('Failed step: ' + context.test.title);
+				}
+
+				process.addListener('uncaughtException', onError);
+
+				console.log('Starting step: ' + context.test.title);
+
+				try {
+					fn.call(context, function (err) {
+						if (err) {
+							onError();
+							done(err);
+						} else {
+							process.removeListener('uncaughtException', onError);
+							console.log('Passed step: ' + context.test.title);
+							done(null);
+						}
+					});
+				} catch (ex) {
+					onError();
+					throw ex;
+				}
+			}
+		};
+
+		/**
+		 * Skip test step.
+		 * In results, step reported as skipped. Does not skip pending steps!
+		 */
+		context.xstep = context.step.skip = function (description, expectedResult, fn) {
+			return context.step(description, expectedResult);
+		};
+	});
 };
