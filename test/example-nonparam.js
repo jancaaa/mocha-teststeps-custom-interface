@@ -12,17 +12,17 @@ afterEachSuite(function () {
 	console.log('This function will run after each suite.');
 });
 
-mysuite('SUITE1', function () {
+suite('SUITE1', function () {
 	beforeEachTest(function () {
-		console.log('This function will run before each test in SUITE1. For correct behaviour beforeEachTest() must be inside mysuite().');
+		console.log('This function will run before each test in SUITE1. For correct behaviour beforeEachTest() must be inside suite().');
 		console.log('You can access the test config (or other test parameters) from beforeEachTest()/beforeTest()/afterEachTest()/afterTest() hooks: ' + this.test.parent.config);
 	});
 
 	afterEachTest(function () {
-		console.log('This function will run after each test in SUITE1. For correct behavior afterEachTest() must be inside mysuite().');
+		console.log('This function will run after each test in SUITE1. For correct behavior afterEachTest() must be inside suite().');
 	});
 
-	mytest('TEST1', 'ID1', function () {
+	test('TEST1', 'ID1', function () {
 		beforeTest(function () {
 			console.log('This function will run once - before first step of the test');
 		});
@@ -45,7 +45,7 @@ mysuite('SUITE1', function () {
 		});
 	});
 
-	mytest('TEST2', 'ID2', function () {
+	test('TEST2', 'ID2', function () {
 		step('Step21', 'Result21', function () {
 			console.log('This step will pass.');
 			expect(true).to.be.true;
@@ -61,8 +61,8 @@ mysuite('SUITE1', function () {
 	});
 });
 
-mysuite('SUITE2', function () {
-	mytest('TEST3', 'ID3', function () {
+suite('SUITE2', function () {
+	test('TEST3', 'ID3', function () {
 		step('Step31', 'Result31', function () {
 			expect(true).to.be.true;
 		});
@@ -74,7 +74,7 @@ mysuite('SUITE2', function () {
 		});
 	});
 
-	mytest('TEST4', 'ID4', function () {
+	test('TEST4', 'ID4', function () {
 		step('Step41', 'Result41', function () {
 			expect(true).to.be.true;
 		});

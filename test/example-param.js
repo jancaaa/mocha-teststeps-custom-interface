@@ -8,14 +8,14 @@ afterEachSuite(function () {
 	console.log('This function will run after each suite.');
 });
 
-mysuite('SUITE1', function () {
+suite('SUITE1', function () {
 	beforeEachTest(function () {
-		console.log('This function will run before each test in SUITE1. For correct behaviour beforeEachTest() must be inside mysuite().');
+		console.log('This function will run before each test in SUITE1. For correct behaviour beforeEachTest() must be inside suite().');
 		console.log('You can access the test config (or other test parameters) from beforeEachTest()/beforeTest()/afterEachTest()/afterTest() hooks: ' + this.test.parent.config);
 	});
 
 	afterEachTest(function () {
-		console.log('This function will run after each test in SUITE1. For correct behavior afterEachTest() must be inside mysuite().');
+		console.log('This function will run after each test in SUITE1. For correct behavior afterEachTest() must be inside suite().');
 	});
 
 	testParam('TEST1', 'ID1', ['configuration1', 'configuration2'], function () {
@@ -53,7 +53,7 @@ mysuite('SUITE1', function () {
 	});
 });
 
-mysuite('SUITE2', function () {
+suite('SUITE2', function () {
 	testParam('TEST3', 'ID3', ['configuration1', 'configuration2'], function () {
 		step('Step31', 'Result31', function () {
 			expect(true).to.be.true;

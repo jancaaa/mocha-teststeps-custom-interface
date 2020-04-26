@@ -1,7 +1,7 @@
 var Mocha = require('mocha');
 (Suite = require('mocha/lib/suite')), (Test = require('mocha/lib/test')), (escapeRe = require('escape-string-regexp'));
 
-module.exports = Mocha.interfaces['example-ui'] = function (suite) {
+module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 	var suites = [suite];
 
 	suite.on('pre-require', function (context, file, mocha) {
@@ -10,7 +10,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		context.run = mocha.options.delay && common.runWithSuite(suite);
 
 		/**
-		 * Run before each describe (which means mysuite() or mytest()).
+		 * Run before each describe (which means suite() or test()).
 		 * Currently, there is no check for correct nesting. See example to place it correctly.
 		 */
 		context.beforeEachSuite = context.beforeEachTest = function (fn) {
@@ -26,7 +26,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		};
 
 		/**
-		 * Run after each describe (which means mysuite() or mytest()).
+		 * Run after each describe (which means suite() or test()).
 		 * Currently, there is no check for correct nesting. See example to place it correctly.
 		 */
 		context.afterEachSuite = context.afterEachTest = function (fn) {
@@ -53,7 +53,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		/**
 		 * Test suite - just renamed describe.
 		 */
-		context.mysuite = function (title, fn) {
+		context.suite = function (title, fn) {
 			return common.suite.create({
 				title: title,
 				file: file,
@@ -61,7 +61,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			});
 		};
 
-		context.mysuite.only = function (title, fn) {
+		context.suite.only = function (title, fn) {
 			return common.suite.only({
 				title: title,
 				file: file,
@@ -69,7 +69,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			});
 		};
 
-		context.xmysuite = context.mysuite.skip = function (title, fn) {
+		context.xsuite = context.suite.skip = function (title, fn) {
 			return common.suite.skip({
 				title: title,
 				file: file,
@@ -80,7 +80,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		/**
 		 * Test - describe with added parameter (testCaseID).
 		 */
-		context.mytest = function (title, testCaseID, fn) {
+		context.test = function (title, testCaseID, fn) {
 			return common.suite.create({
 				title: title,
 				file: file,
@@ -90,7 +90,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			});
 		};
 
-		context.mytest.only = function (title, testCaseID, fn) {
+		context.test.only = function (title, testCaseID, fn) {
 			return common.suite.only({
 				title: title,
 				file: file,
@@ -100,7 +100,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			});
 		};
 
-		context.xmytest = context.mytest.skip = function (title, testCaseID, fn) {
+		context.xtest = context.test.skip = function (title, testCaseID, fn) {
 			return common.suite.skip({
 				title: title,
 				file: file,
