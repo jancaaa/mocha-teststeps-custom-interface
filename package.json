@@ -1,6 +1,8 @@
 {
 	"scripts": {
-		"test": "mocha --require ./example-ui.js --ui example-ui"
+		"test": "mocha --require ./example-ui.js --ui example-ui --timeout 600",
+		"run-example-nonparam": "mocha --require ./example-ui.js --ui example-ui --timeout 600 test/example-nonparam.js",
+		"run-example-param": "mocha --require ./example-ui.js --ui example-ui --timeout 600 test/example-param.js"
 	},
 	"devDependencies": {
 		"mocha-bdd-steps": "^1.1.0",
