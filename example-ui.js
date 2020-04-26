@@ -7,16 +7,52 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 	suite.on('pre-require', function (context, file, mocha) {
 		var common = require('mocha/lib/interfaces/common')(suites, context, mocha);
 
-		context.before = context.beforeTest = common.before;
-		context.after = context.afterTest = common.after;
 		context.run = mocha.options.delay && common.runWithSuite(suite);
 
 		/**
-		 * Describe a "suite" with the given `title`
-		 * and callback `fn` containing nested suites
-		 * and/or tests.
+		 * Run before each describe (which means mysuite() or mytest()).
+		 * Currently, there is no check for correct nesting. See example to place it correctly.
 		 */
-		//context.describe = context.context =
+		context.beforeEachSuite = context.beforeEachTest = function (fn) {
+			common.before(function () {
+				let suites = this.test.parent.suites || [];
+				//console.log(this.test.parent.parent); //undefined - suite level; has parent - test level
+				suites.forEach(s => {
+					s.beforeAll('beforeEachTest/beforeEachSuite', fn);
+					let hook = s._beforeAll.pop();
+					s._beforeAll.unshift(hook);
+				});
+			});
+		};
+
+		/**
+		 * Run after each describe (which means mysuite() or mytest()).
+		 * Currently, there is no check for correct nesting. See example to place it correctly.
+		 */
+		context.afterEachSuite = context.afterEachTest = function (fn) {
+			common.before(function () {
+				let suites = this.test.parent.suites || [];
+				suites.forEach(s => {
+					s.afterAll('afterEachTest/afterEachSuite', fn);
+					let hook = s._afterAll.shift();
+					s._afterAll.push(hook);
+				});
+			});
+		};
+
+		/**
+		 * Run before each test. In case of parametrized test, runs before each instance (each config).
+		 */
+		context.beforeTest = common.before;
+
+		/**
+		 * Run after each test. In case of parametrized test, runs after each instance (each config).
+		 */
+		context.afterTest = common.after;
+
+		/**
+		 * Test suite - just renamed describe.
+		 */
 		context.mysuite = function (title, fn) {
 			return common.suite.create({
 				title: title,
@@ -25,22 +61,6 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			});
 		};
 
-		/**
-		 * Pending suite.
-		 */
-		//context.xdescribe = context.xcontext = context.describe.skip =
-		context.xmysuite = context.mysuite.skip = function (title, fn) {
-			return common.suite.skip({
-				title: title,
-				file: file,
-				fn: fn
-			});
-		};
-
-		/**
-		 * Exclusive suite.
-		 */
-		//context.describe.only =
 		context.mysuite.only = function (title, fn) {
 			return common.suite.only({
 				title: title,
@@ -49,41 +69,12 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 			});
 		};
 
-		/**
-		 * Describe a specification or test-case
-		 * with the given `title` and callback `fn`
-		 * acting as a thunk.
-		 */
-		context.it = context.specify = function (title, fn) {
-			var suite = suites[0];
-			if (suite.isPending()) {
-				fn = null;
-			}
-			var test = new Test(title, fn);
-			test.file = file;
-			suite.addTest(test);
-			return test;
-		};
-
-		/**
-		 * Exclusive test-case.
-		 */
-		context.it.only = function (title, fn) {
-			return common.test.only(mocha, context.it(title, fn));
-		};
-
-		/**
-		 * Pending test case.
-		 */
-		context.xit = context.xspecify = context.it.skip = function (title) {
-			return context.it(title);
-		};
-
-		/**
-		 * Number of attempts to retry.
-		 */
-		context.it.retries = function (n) {
-			context.retries(n);
+		context.xmysuite = context.mysuite.skip = function (title, fn) {
+			return common.suite.skip({
+				title: title,
+				file: file,
+				fn: fn
+			});
 		};
 
 		/**
@@ -127,7 +118,6 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		context.testParam = function (title, testCaseID, configs, fn) {
 			configs.forEach(config => {
 				var fullTitle = title + ', CONF: ' + JSON.stringify(config);
-				//console.log(fn.length);
 				if (fn.length === 0) {
 					//call sync
 					var fnu = function () {
@@ -139,14 +129,14 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 						fn(done);
 					};
 				}
-				//mytest(name, testCaseID, fnu);
+
 				var test = common.suite.create({
 					title: fullTitle,
 					file: file,
 					fn: fnu
 				});
 				//save additional parameters
-				test.name = title; //title bez CONF
+				test.name = title; //test name - title without CONF
 				test.testCaseID = testCaseID;
 				test.config = config;
 				return test;
@@ -167,14 +157,14 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 						fn(done);
 					};
 				}
-				//mytest(name, testCaseID, fnu);
+
 				var test = common.suite.only({
 					title: fullTitle,
 					file: file,
 					fn: fnu
 				});
 				//save additional parameters
-				test.name = title; //title bez CONF
+				test.name = title; //test name - title without CONF
 				test.testCaseID = testCaseID;
 				test.config = config;
 				return test;
@@ -184,49 +174,9 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 		context.xtestParam = context.testParam.skip = function (title, testCaseID, configs, fn) {};
 
 		/**
-		 * Customized it - takes one extra parameter.
-		 * Does not have any special behavior (e.g. does not skip other steps after failure)!
+		 * Test step.
+		 * In case of failure, subsequent steps of the test are skipped.
 		 */
-		context.stepit = function (description, expectedResult, fn) {
-			var suite = suites[0];
-			if (suite.isPending()) {
-				fn = null;
-			}
-			var test = new Test(description + ' => ' + expectedResult, fn);
-			test.file = file;
-			test.description = description;
-			test.expectedResult = expectedResult;
-			suite.addTest(test);
-			return test;
-		};
-
-		/**
-		 * Run before each describe (which means mysuite() or mytest()).
-		 * Currently, there is no check for correct nesting. See example to place it correctly.
-		 */
-		context.beforeEachSuite = context.beforeEachTest = function (fn) {
-			before(function () {
-				let suites = this.test.parent.suites || [];
-				//console.log(this.test.parent.parent); //undefined - suite level; has parent - test level
-				suites.forEach(s => {
-					s.beforeAll(fn);
-					let hook = s._beforeAll.pop();
-					s._beforeAll.unshift(hook);
-				});
-			});
-		};
-
-		context.afterEachSuite = context.afterEachTest = function (fn) {
-			before(function () {
-				let suites = this.test.parent.suites || [];
-				suites.forEach(s => {
-					s.afterAll(fn);
-					let hook = s._afterAll.shift();
-					s._afterAll.push(hook);
-				});
-			});
-		};
-
 		context.step = function (description, expectedResult, fn, type) {
 			var fnu;
 			if (fn == null) {
@@ -331,7 +281,7 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 
 		/**
 		 * Skip test step.
-		 * In results, step reported as skipped. Does not skip pending steps!
+		 * In results, step reported as skipped. Does not skip subsequent steps!
 		 */
 		context.xstep = context.step.skip = function (description, expectedResult, fn) {
 			return context.step(description, expectedResult);
