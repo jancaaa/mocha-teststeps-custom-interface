@@ -203,8 +203,8 @@ module.exports = Mocha.interfaces['example-ui'] = function (suite) {
 				let suites = this.test.parent.suites || [];
 				suites.forEach(s => {
 					s.afterAll(fn);
-					let hook = s._afterAll.pop();
-					s._afterAll.unshift(hook);
+					let hook = s._afterAll.shift();
+					s._afterAll.push(hook);
 				});
 			});
 		};
