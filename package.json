@@ -2,13 +2,10 @@
 	"scripts": {
 		"test": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600",
 		"run-example-nonparam": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-nonparam.js",
-		"run-example-param": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-param.js"
+		"run-example-param": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-param.js",
+		"run-example-printresults": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-printresults.js"
 	},
-	"devDependencies": {
-		"mocha-bdd-steps": "^1.1.0",
-		"mocha-param": "^2.0.0",
-		"mocha-steps": "^1.3.0"
-	},
+	"devDependencies": {},
 	"dependencies": {
 		"chai": "^4.2.0",
 		"mocha": "^7.1.1"
