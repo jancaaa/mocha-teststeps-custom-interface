@@ -17,7 +17,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 			common.before(function () {
 				let suites = this.test.parent.suites || [];
 				//console.log(this.test.parent.parent); //undefined - suite level; has parent - test level
-				suites.forEach(s => {
+				suites.forEach((s) => {
 					s.beforeAll('beforeEachTest/beforeEachSuite', fn);
 					let hook = s._beforeAll.pop();
 					s._beforeAll.unshift(hook);
@@ -32,7 +32,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		context.afterEachSuite = context.afterEachTest = function (fn) {
 			common.before(function () {
 				let suites = this.test.parent.suites || [];
-				suites.forEach(s => {
+				suites.forEach((s) => {
 					s.afterAll('afterEachTest/afterEachSuite', fn);
 					let hook = s._afterAll.shift();
 					s._afterAll.push(hook);
@@ -117,7 +117,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		 * Do not pass anything as function (fn) parameters (except done callback).
 		 */
 		context.testParam = function (title, testCaseID, configs, fn) {
-			configs.forEach(config => {
+			configs.forEach((config) => {
 				var fullTitle = title + ', CONF: ' + JSON.stringify(config);
 				if (fn.length === 0) {
 					//call sync
@@ -145,7 +145,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		};
 
 		context.testParam.only = function (title, testCaseID, configs, fn) {
-			configs.forEach(config => {
+			configs.forEach((config) => {
 				var fullTitle = title + ', CONF: ' + JSON.stringify(config);
 				if (fn.length === 0) {
 					//call sync
