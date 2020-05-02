@@ -86,6 +86,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 				file: file,
 				fn: fn,
 				//save additional parameters
+				name: title,
 				testCaseID: testCaseID
 			});
 		};
