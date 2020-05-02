@@ -177,7 +177,33 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 			});
 		};
 
-		context.xtestParam = context.testParam.skip = function (title, testCaseID, configs, fn) {};
+		context.xtestParam = context.testParam.skip = function (title, testCaseID, configs, fn) {
+			configs.forEach((config) => {
+				var fullTitle = title + ', CONF: ' + JSON.stringify(config);
+				if (fn.length === 0) {
+					//call sync
+					var fnu = function () {
+						return fn();
+					};
+				} else {
+					//call async
+					var fnu = function (done) {
+						fn(done);
+					};
+				}
+
+				var test = common.suite.skip({
+					title: fullTitle,
+					file: file,
+					fn: fnu
+				});
+				//save additional parameters
+				test.name = title; //test name - title without CONF
+				test.testCaseID = testCaseID;
+				test.config = config;
+				return test;
+			});
+		};
 
 		/**
 		 * Test step.
