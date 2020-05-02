@@ -178,7 +178,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		 * Test step.
 		 * In case of failure, subsequent steps of the test are skipped.
 		 */
-		context.step = function (description, expectedResult, fn, type) {
+		context.step = function (description, expectedResult, fn) {
 			var fnu;
 			if (fn == null) {
 				fnu = null;
