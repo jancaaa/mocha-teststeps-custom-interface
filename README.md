@@ -8,71 +8,71 @@ When I joined my new team, the tests were looking like this:
 
 ```javascript
 describe('Login flows tests', () => {
-	itParam('Login - logout, CONF: ${JSON.stringify(value)}', configs, async (config) => {
-		var testCaseID = 'TC01';
+  itParam('Login - logout, CONF: ${JSON.stringify(value)}', configs, async (config) => {
+    var testCaseID = 'TC01';
 
-		logger.debug('setting config build and name for logging');
-		config.build = BUILDNAME;
-		config.name = 'Login - logout';
+    logger.debug('setting config build and name for logging');
+    config.build = BUILDNAME;
+    config.name = 'Login - logout';
 
-		var testResult = 'failed';
-		var driver = buildDriver(config);
+    var testResult = 'failed';
+    var driver = buildDriver(config);
 
-		var testSteps = new Steps([
-			{
-				description: 'Open login page',
-				expected_result: 'Login page opened',
-				order: 1,
-				status: 'SKIP'
-			},
-			{
-				description: 'Log in',
-				expected_result: 'Login successful, navigated to Home page',
-				order: 2,
-				status: 'SKIP'
-			},
-			{
-				description: 'Logout',
-				expected_result: 'Logout successful',
-				order: 3,
-				status: 'SKIP'
-			}
-		]);
+    var testSteps = new Steps([
+      {
+        description: 'Open login page',
+        expected_result: 'Login page opened',
+        order: 1,
+        status: 'SKIP'
+      },
+      {
+        description: 'Log in',
+        expected_result: 'Login successful, navigated to Home page',
+        order: 2,
+        status: 'SKIP'
+      },
+      {
+        description: 'Logout',
+        expected_result: 'Logout successful',
+        order: 3,
+        status: 'SKIP'
+      }
+    ]);
 
-		try {
-			testSteps.startStep(1);
+    try {
+      testSteps.startStep(1);
 
-			var loginPage = new LoginPage(driver, loginURL);
-			logger.info('Opening login page');
-			await loginPage.open();
-			await loginPage.waitForRequiredElements();
+      var loginPage = new LoginPage(driver, loginURL);
+      logger.info('Opening login page');
+      await loginPage.open();
+      await loginPage.waitForRequiredElements();
 
-			testSteps.passStep(1);
-			testSteps.startStep(2);
+      testSteps.passStep(1);
+      testSteps.startStep(2);
 
-			logger.info('Log in');
-			await loginPage.login('myusername', 'mypassword');
-			var homePage = new HomePage(driver);
-			await homePage.waitForRequiredElements();
-			var loggedUser = await homepage.getLoggedUser();
-			expect(loggedUser).to.equal('myusername');
+      logger.info('Log in');
+      await loginPage.login('myusername', 'mypassword');
+      var homePage = new HomePage(driver);
+      await homePage.waitForRequiredElements();
+      var loggedUser = await homepage.getLoggedUser();
+      expect(loggedUser).to.equal('myusername');
 
-			testSteps.passStep(2);
-			testSteps.startStep(3);
+      testSteps.passStep(2);
+      testSteps.startStep(3);
 
-			logger.info('Logout');
-			await homePage.logout();
-			await loginPage.waitForRequiredElements();
-			var loggedOutMessageShown = await loginPage.isLogoutMessageShown();
-			exapect(loggedOutMessageShown).to.true;
+      logger.info('Logout');
+      await homePage.logout();
+      await loginPage.waitForRequiredElements();
+      var loggedOutMessageShown = await loginPage.isLogoutMessageShown();
+      exapect(loggedOutMessageShown).to.true;
 
-			testSteps.passStep(3);
-			testResult = 'passed';
-		} finally {
-			await driver.quit();
-			await client.report(testCaseID, testResult, testSteps);
-		}
-	});
+      testSteps.passStep(3);
+      testResult = 'passed';
+    } finally {
+      await driver.quit();
+      await client.report(testCaseID, testResult, testSteps);
+    }
+  });
 });
 ```
 
@@ -126,17 +126,17 @@ See examples for correct placement of the hooks.
 
 ```javascript
 suite('SUITE1', function () {
-	test('TEST1', 'ID1', function () {
-		step('Step1', 'Step passed', function () {
-			expect(true).to.be.true;
-		});
-		step('Step2', 'Step failed', function () {
-			expect(true).to.be.false;
-		});
-		step('Step3', 'Step was skipped because previous step failed', function () {
-			expect(true).to.be.true;
-		});
-	});
+  test('TEST1', 'ID1', function () {
+    step('Step1', 'Step passed', function () {
+      expect(true).to.be.true;
+    });
+    step('Step2', 'Step failed', function () {
+      expect(true).to.be.false;
+    });
+    step('Step3', 'Step was skipped because previous step failed', function () {
+      expect(true).to.be.true;
+    });
+  });
 });
 ```
 
@@ -166,8 +166,8 @@ Programmatically:
 
 ```javascript
 var mocha = new Mocha({
-	require: './teststeps-ui.js',
-	ui: 'teststeps-ui'
+  require: './teststeps-ui.js',
+  ui: 'teststeps-ui'
 });
 ```
 
