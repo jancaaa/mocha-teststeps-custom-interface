@@ -212,8 +212,11 @@ As [default Mocha reporter](https://mochajs.org/#reporters) is used, titles are 
 I used several npm modules and other articles as a source of inspiration. Here are the main ones:
 
 [Mocha Wiki about creating a custom interface](https://github.com/mochajs/mocha/wiki/Third-party-UIs)
+
 [Mocha BDD interface](https://github.com/mochajs/mocha/blob/master/lib/interfaces/bdd.js) - to get know how does it work
+
 [mocha-param](https://www.npmjs.com/package/mocha-param) (itParam) - to get know how parameterized tests work
+
 [mocha-steps](https://www.npmjs.com/package/mocha-steps) - to skip remaining steps after failure
 
 
