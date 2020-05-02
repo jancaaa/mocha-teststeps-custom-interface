@@ -113,3 +113,12 @@ dist
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+
+# IDE - VSCode
+.vscode
+
+# Ignore all local history of files
+.history
+
+# IDE - JetBrains IntelliJ
+.idea
