@@ -81,34 +81,39 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		 * Test - describe with added parameter (testCaseID).
 		 */
 		context.test = function (title, testCaseID, fn) {
-			return common.suite.create({
+			var test = common.suite.create({
 				title: title,
 				file: file,
-				fn: fn,
-				//save additional parameters
-				name: title,
-				testCaseID: testCaseID
+				fn: fn
 			});
+			//save additional parameters
+			test.name = title;
+			test.testCaseID = testCaseID;
+			return test;
 		};
 
 		context.test.only = function (title, testCaseID, fn) {
-			return common.suite.only({
+			var test = common.suite.only({
 				title: title,
 				file: file,
-				fn: fn,
-				//save additional parameters
-				testCaseID: testCaseID
+				fn: fn
 			});
+			//save additional parameters
+			test.name = title;
+			test.testCaseID = testCaseID;
+			return test;
 		};
 
 		context.xtest = context.test.skip = function (title, testCaseID, fn) {
-			return common.suite.skip({
+			var test = common.suite.skip({
 				title: title,
 				file: file,
-				fn: fn,
-				//save additional parameters
-				testCaseID: testCaseID
+				fn: fn
 			});
+			//save additional parameters
+			test.name = title;
+			test.testCaseID = testCaseID;
+			return test;
 		};
 
 		/**
