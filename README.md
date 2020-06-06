@@ -55,7 +55,7 @@ describe('Login flows tests', () => {
       var homePage = new HomePage(driver);
       await homePage.waitForRequiredElements();
       var loggedUser = await homepage.getLoggedUser();
-      expect(loggedUser).to.equal('myusername');
+      expect(loggedUser).to.be.equal('myusername');
 
       testSteps.passStep(2);
       testSteps.startStep(3);
@@ -64,7 +64,7 @@ describe('Login flows tests', () => {
       await homePage.logout();
       await loginPage.waitForRequiredElements();
       var loggedOutMessageShown = await loginPage.isLogoutMessageShown();
-      exapect(loggedOutMessageShown).to.true;
+      exapect(loggedOutMessageShown).to.be.true;
 
       testSteps.passStep(3);
       testResult = 'passed';
