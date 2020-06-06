@@ -15,12 +15,16 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		 */
 		context.beforeEachSuite = context.beforeEachTest = function (fn) {
 			common.before(function () {
-				let suites = this.test.parent.suites || [];
+				var suites = this.test.parent.suites || [];
 				//console.log(this.test.parent.parent); //undefined - suite level; has parent - test level
 				suites.forEach((s) => {
 					s.beforeAll('beforeEachTest/beforeEachSuite', fn);
-					let hook = s._beforeAll.pop();
-					s._beforeAll.unshift(hook);
+
+					if (s._beforeAll.length > 1) {
+						//reorder
+						var hook = s._beforeAll.pop();
+						s._beforeAll.unshift(hook);
+					}
 				});
 			});
 		};
@@ -31,11 +35,15 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 		 */
 		context.afterEachSuite = context.afterEachTest = function (fn) {
 			common.before(function () {
-				let suites = this.test.parent.suites || [];
+				var suites = this.test.parent.suites || [];
 				suites.forEach((s) => {
 					s.afterAll('afterEachTest/afterEachSuite', fn);
-					let hook = s._afterAll.shift();
-					s._afterAll.push(hook);
+					
+					if (s._afterAll.length > 1) {
+						//reorder
+						var hook = s._afterAll.shift();
+						s._afterAll.push(hook);
+					}
 				});
 			});
 		};
@@ -281,7 +289,6 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 
 			function async(done) {
 				var context = this;
-				var title = context.test.title;
 
 				function onError() {
 					handleStepFailure(context.test);
