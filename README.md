@@ -177,7 +177,7 @@ Currently (version 2.3), mocha-parallel support only BDD interface. The --ui opt
 
 ### Drawbacks of using Suite for suites and tests
 
-Both suites and tests are internally represented as Mocha Suite. **Currently, there is no check if the nesting is correct or not. Just do what we said and nobody gets hurt ;)**
+Both suites and tests are internally represented as Mocha Suite. To distinguish whether Suite is a test or suite, flag `isTest = true` was added to Suites which represents tests. **Currently, there is no check if the nesting is correct or not. Just do what we said and nobody gets hurt ;)**
 
 ### Accessing to passed parameters and results
 

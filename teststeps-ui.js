@@ -97,6 +97,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 			//save additional parameters
 			test.name = title;
 			test.testCaseID = testCaseID;
+			test.isTest = true;
 			return test;
 		};
 
@@ -109,6 +110,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 			//save additional parameters
 			test.name = title;
 			test.testCaseID = testCaseID;
+			test.isTest = true;
 			return test;
 		};
 
@@ -121,6 +123,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 			//save additional parameters
 			test.name = title;
 			test.testCaseID = testCaseID;
+			test.isTest = true;
 			return test;
 		};
 
@@ -153,6 +156,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 				test.name = title; //test name - title without CONF
 				test.testCaseID = testCaseID;
 				test.config = config;
+				test.isTest = true;
 				return test;
 			});
 		};
@@ -181,6 +185,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 				test.name = title; //test name - title without CONF
 				test.testCaseID = testCaseID;
 				test.config = config;
+				test.isTest = true;
 				return test;
 			});
 		};
@@ -209,6 +214,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 				test.name = title; //test name - title without CONF
 				test.testCaseID = testCaseID;
 				test.config = config;
+				test.isTest = true;
 				return test;
 			});
 		};
