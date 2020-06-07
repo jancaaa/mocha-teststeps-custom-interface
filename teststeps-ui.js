@@ -124,6 +124,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 			test.name = title;
 			test.testCaseID = testCaseID;
 			test.isTest = true;
+			test.state = 'skipped';
 			return test;
 		};
 
@@ -215,6 +216,7 @@ module.exports = Mocha.interfaces['teststeps-ui'] = function (suite) {
 				test.testCaseID = testCaseID;
 				test.config = config;
 				test.isTest = true;
+				test.state = 'skipped';
 				return test;
 			});
 		};
