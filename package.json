@@ -3,7 +3,9 @@
 		"test": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600",
 		"run-example-nonparam": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-nonparam.js",
 		"run-example-param": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-param.js",
-		"run-example-printresults": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-printresults.js"
+		"run-example-printresults": "mocha --require ./teststeps-ui.js --ui teststeps-ui --timeout 600 test/example-printresults.js",
+		"run-example-nonparam-with-reporter": "mocha --require ./teststeps-ui.js --ui teststeps-ui --reporter teststeps-reporter.js --timeout 600 test/example-nonparam.js",
+		"run-example-param-with-reporter": "mocha --require ./teststeps-ui.js --ui teststeps-ui --reporter teststeps-reporter.js --timeout 600 test/example-param.js"	
 	},
 	"devDependencies": {},
 	"dependencies": {
